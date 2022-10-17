@@ -36,13 +36,14 @@ contract SelfiePool is ReentrancyGuard {
         token.transfer(msg.sender, borrowAmount);        
         
         require(msg.sender.isContract(), "Sender must be a deployed contract");
-        msg.sender.functionCall(
+        (bool success, ) = msg.sender.call(
             abi.encodeWithSignature(
                 "receiveTokens(address,uint256)",
                 address(token),
                 borrowAmount
             )
         );
+        require(success, "External call failed");
         
         uint256 balanceAfter = token.balanceOf(address(this));
 

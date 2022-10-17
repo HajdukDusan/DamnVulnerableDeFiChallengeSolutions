@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "../DamnValuableTokenSnapshot.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title SimpleGovernance
  * @author Damn Vulnerable DeFi (https://damnvulnerabledefi.xyz)
@@ -59,10 +61,11 @@ contract SimpleGovernance {
         GovernanceAction storage actionToExecute = actions[actionId];
         actionToExecute.executedAt = block.timestamp;
 
-        actionToExecute.receiver.functionCallWithValue(
-            actionToExecute.data,
-            actionToExecute.weiAmount
-        );
+        (bool success, ) = actionToExecute.receiver.call{
+            value:actionToExecute.weiAmount
+        }(actionToExecute.data);
+
+        require(success, "External call failed");
 
         emit ActionExecuted(actionId, msg.sender);
     }
